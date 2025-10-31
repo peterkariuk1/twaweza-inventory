@@ -13,6 +13,7 @@ header {
   padding: 3px 12px;
   background-color: var(--accent-color);
   margin-bottom: 8px;
+  margin-top: 8px;
   border-radius: 12px;
 }
 header h2 {
@@ -25,4 +26,123 @@ header div {
   display: flex;
   align-items: center;
   gap: 2px;
+}
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+}
+.dashboard-page .TOP {
+  height: 60vh;
+  /* background-
+  : bisque; */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+.orders-cards {
+  display: flex;
+  justify-content: space-between;
+}
+.month-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  width: 63%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(30px);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  padding: 1rem;
+  display: flex;
+  gap: 3.5rem;
+}
+
+.month-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.left .top,
+.left .bottom {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.left .top p {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 0px;
+}
+.left .mid h2 {
+  font-size: 44px;
+  margin: 4px;
+}
+.left .mid p {
+  font-size: 14px;
+  margin: 4px;
+}
+.left .mid h2 span {
+  font-size: 10px;
+  margin: 4px;
+  color: rgb(0, 0, 65);
+}
+.content .left .bottom p {
+  font-weight: 700;
+  font-size: 10px;
+  margin-bottom: 0px;
+  color: #00d000;
+}
+.today-card .left .bottom p {
+  font-weight: 700;
+  font-size: 10px;
+  margin-bottom: 0px;
+  color: #ff2600ff;
+}
+.content .right {
+  padding-left: 10px;
+  border-left: 1px solid #e4e9ff67;
+}
+.content .right p {
+  font-weight: 700;
+  font-size: 12px;
+}
+.content .right ul {
+  list-style: none;
+}
+.content .right li {
+  font-size: 12px;
+}
+.content .right li span {
+  color: rgb(203, 255, 234);
+  font-weight: 700;
+  font-size: 10px;
+  margin-left: 4px;
+}
+.today-card {
+  width: 34%;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.429);
+  padding: 8px;
+}
+.stock-categories {
+  display: flex;
+  gap: 10px;
 }

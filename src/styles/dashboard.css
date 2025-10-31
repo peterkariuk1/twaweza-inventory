@@ -67,13 +67,13 @@
   justify-content: center;
 }
 .logout-nav p {
-  color: red;
+  color: rgb(255, 0, 0);
   font-weight: 600;
 }
 .nav-buttons {
   display: flex;
   flex-direction: column;
-  margin-top: 2rem;
+  margin-top: 4rem;
   width: 100%;
 }
 
@@ -83,10 +83,14 @@
   align-items: center;
   gap: 10px;
   color: var(--primary-color);
-  padding: 0.4rem 2.5rem;
+  padding: .7rem 2.5rem;
   text-decoration: none;
   transition: 0.3s;
 }
+.nav-item p{
+    margin: 0px;
+}
+
 
 .nav-item:hover,
 .logout-nav:hover {
@@ -99,5 +103,7 @@
   color: var(--secondary-color);
   font-weight: bold;
   border-left: 5px solid var(--accent-color);
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
 }
 

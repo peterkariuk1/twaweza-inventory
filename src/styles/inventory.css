@@ -1,0 +1,262 @@
+.inventory-page {
+  padding: 1rem;
+  color: var(--secondary-color);
+  background: var(--primary-color);
+  width: 96%;
+  z-index: 0.4;
+}
+
+.inventory-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 0.45rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.inventory-controls h2 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-box,
+.filter-box {
+  display: flex;
+  align-items: center;
+  background: #6b6b6b2e;
+  border-radius: 8px;
+  padding: 0.5rem 0.4rem;
+  max-height: max-content;
+}
+
+.search-box input,
+.filter-box select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  margin-left: 0.4rem;
+}
+
+.search-box input::placeholder {
+  color: rgba(0, 0, 0, 0.538);
+}
+
+.add-btn {
+  background: #1976d2;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.add-btn:hover {
+  background: #125ea9;
+}
+
+/* Summary Cards Container */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  z-index: -1;
+}
+
+/* Each Card */
+.summary-card {
+  background: var(--primary-color);
+  border-radius: 16px;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: 0.25s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Icon Area */
+.icon-area {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.8rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-icon {
+  font-size: 1.7rem;
+  color: var(--secondary-color);
+}
+
+/* Text */
+.text-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 0.9rem;
+  /* opacity: 0.85; */
+  margin: 0;
+}
+
+.card-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0.2rem 0 0 0;
+  color: var(--dark-color);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+  .summary-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}
+/* Inventory Table Container */
+.inventory-table-container {
+  margin-top: 2rem;
+  color: var(--secondary-color);
+  z-index: 1;
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.inventory-table-title {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Scrollable wrapper */
+.inventory-table-wrapper {
+  max-height: 260px; /* limit height */
+  overflow-y: auto;
+  background: var(--primary-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* The table */
+.inventory-table tr th {
+  color: var(--secondary-color);
+}
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--dark-color);
+  overflow: hidden;
+}
+
+.inventory-table thead {
+  background: rgba(255, 255, 255, 0.08);
+  /* position: sticky; */
+  top: 0;
+  /* z-index: 2; */
+}
+
+.inventory-table th,
+.inventory-table td {
+  padding: 0.3rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hover effect */
+.inventory-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Status Chips */
+.status-chip {
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Colors */
+.status-green {
+  background: #1bbf6a33;
+  color: #1bbf6a;
+}
+
+.status-orange {
+  background: #ffa72633;
+  color: #ffa726;
+}
+
+.status-red {
+  background: #ff525233;
+  color: #ff5252;
+}
+
+/* Actions */
+.actions-td {
+  text-align: center;
+  width: 40px;
+}
+
+.actions-menu-icon {
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  padding: 0.3rem;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.actions-menu-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Scroll Bar Styling */
+.inventory-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inventory-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.inventory-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
