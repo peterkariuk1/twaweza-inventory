@@ -27,7 +27,6 @@ const AddItemModal = ({ onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        
         {/* HEADER */}
         <div className="modal-header">
           <h2>Add New Inventory Item</h2>
@@ -36,18 +35,6 @@ const AddItemModal = ({ onClose }) => {
 
         {/* BODY */}
         <div className="modal-body">
-
-          {/* Item Name */}
-          <div className="form-group">
-            <label>Item Name</label>
-            <input
-              type="text"
-              placeholder="Enter item name"
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-            />
-          </div>
-
           {/* Category */}
           <div className="form-group">
             <label>Category</label>
@@ -65,6 +52,16 @@ const AddItemModal = ({ onClose }) => {
                 </label>
               ))}
             </div>
+          </div>
+          {/* Item Name */}
+          <div className="form-group">
+            <label>Item Name</label>
+            <input
+              type="text"
+              placeholder="Enter item name, e.g 120pgs newsprint squared"
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+            />
           </div>
 
           {/* Unit Price */}
@@ -137,7 +134,9 @@ const AddItemModal = ({ onClose }) => {
 
         {/* FOOTER */}
         <div className="modal-footer">
-          <button className="cancel-btn" onClick={onClose}>Cancel</button>
+          <button className="cancel-btn" onClick={onClose}>
+            Cancel
+          </button>
           <button className="save-btn">Save Item</button>
         </div>
       </div>

@@ -3,27 +3,43 @@ import AddIcon from "@mui/icons-material/Add";
 import "../styles/inventory.css";
 import AddItemModal from "./AddItemModal";
 import PrintIcon from "@mui/icons-material/Print";
+import StockOverviewModal from "./StockOverviewModal";
+import ReceiveStockModal from "./ReceiveStockModal";
 
 const InventoryControls = () => {
-  const [showModal, setShowModal] = useState(false);
-
+  const [activeModal, setActiveModal] = useState(null);
   return (
     <div className="inventory-controls">
       <h2>Inventory Overview</h2>
 
       <div className="controls-right">
-        {/* Add Button */}
-        <button className="add-btn" onClick={() => setShowModal(true)}>
+        {/* STOCK OVERVIEW */}
+        <button className="add-btn" onClick={() => setActiveModal("overview")}>
           <PrintIcon /> Stock Overview
         </button>
-        <button className="add-btn" onClick={() => setShowModal(true)}>
+
+        {/* ADD ITEM */}
+        <button className="add-btn" onClick={() => setActiveModal("add")}>
           <AddIcon /> Add Item
         </button>
-        <button className="add-btn" onClick={() => setShowModal(true)}>
+
+        {/* RECEIVING STOCK */}
+        <button className="add-btn" onClick={() => setActiveModal("receive")}>
           <AddIcon /> Receiving Stock
         </button>
 
-        {showModal && <AddItemModal onClose={() => setShowModal(false)} />}
+        {/* CONDITIONAL MODALS */}
+        {activeModal === "add" && (
+          <AddItemModal onClose={() => setActiveModal(null)} />
+        )}
+
+        {activeModal === "overview" && (
+          <StockOverviewModal onClose={() => setActiveModal(null)} />
+        )}
+
+        {activeModal === "receive" && (
+          <ReceiveStockModal onClose={() => setActiveModal(null)} />
+        )}
       </div>
     </div>
   );

@@ -137,7 +137,6 @@ const InventoryTable = () => {
           </select>
         </div>
       </div>
-
       <div className="inventory-table-wrapper">
         <table className="inventory-table">
           <thead>
@@ -151,7 +150,6 @@ const InventoryTable = () => {
               <th></th> {/* actions */}
             </tr>
           </thead>
-
           <tbody>
             {items.map((data, i) => (
               <tr key={i}>
@@ -159,15 +157,12 @@ const InventoryTable = () => {
                 <td>{data.category}</td>
                 <td>{data.qty}</td>
                 <td>{data.unit}</td>
-
                 <td>
                   <span className={`status-chip ${statusColor[data.status]}`}>
                     {data.status}
                   </span>
                 </td>
-
                 <td>{data.date}</td>
-
                 <td className="actions-td">
                   <MoreVertIcon className="actions-menu-icon" />
                 </td>
