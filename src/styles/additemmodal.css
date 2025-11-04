@@ -144,3 +144,81 @@ label {
     transform: translateY(0);
   }
 }
+
+.overview-block {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.small-print-btn {
+  margin-top: 0.5rem;
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  cursor: pointer;
+}
+.search-box-modal {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.suggest-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-top: 0.3rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.suggest-item {
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+.suggest-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.manual-list-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.manual-item {
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+  color: var(--secondary-color);
+  background: rgba(255, 255, 255, 0.05);
+  transition: 0.2s;
+}
+
+.manual-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.manual-item.selected {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.no-items {
+  padding: 0.5rem;
+  opacity: 0.6;
+}
