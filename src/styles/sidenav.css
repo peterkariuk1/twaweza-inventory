@@ -1,0 +1,214 @@
+/* === SIDENAV BASE === */
+.side-nav {
+  width: 220px;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4000;
+
+  /* ✅ Slide-in animation */
+  transform: translateX(0);
+  transition: width 0.3s, transform 0.3s ease-in-out;
+}
+
+/* === COLLAPSED MODE (DESKTOP) === */
+.side-nav.collapsed {
+  width: 60px;
+}
+.side-nav.collapsed .logo h2,
+.side-nav.collapsed .profile-top div,
+.side-nav.collapsed p {
+  display: none;
+}
+
+/* === LOGO === */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.logo img {
+  width: 55px;
+}
+
+/* === PROFILE === */
+
+.profile-top {
+  background-color: #366e8b;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.275);
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.profile-top.collapsed {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+/* ✅ Container that clips overflow text */
+.profile-text {
+  width: 70px; /* ensures content stays inside the circle */
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ✅ Text sizes */
+.profile-text h4 {
+  font-size: 12px;
+  margin: 0;
+}
+.profile-text p {
+  font-size: 10px;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+/* ✅ Wrapper for duplicated spans */
+.scroll-wrapper {
+  display: flex;
+  width: max-content;
+  animation: marquee 6s linear infinite;
+}
+
+/* ✅ Duplicated text */
+.scroll-wrapper span {
+  display: inline-block;
+  padding-right: 35px; /* gap between repeats */
+}
+
+/* ✅ Continuous marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ✅ Pause animation on hover */
+.scroll-wrapper:hover {
+  animation-play-state: paused;
+}
+
+/* === NAV ITEMS === */
+.nav-buttons {
+  margin-top: 3rem;
+  width: 100%;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: .7rem 1rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: 0.3s;
+}
+.nav-item p{
+  margin: 0px;
+}
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ACTIVE ROUTE */
+.nav-item.active {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  font-weight: bold;
+  border-left: 6px solid var(--accent-color);
+  border-radius: 8px;
+}
+
+/* === LOGOUT === */
+.logout-nav {
+  margin-top: 4rem;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+/* === COLLAPSE BUTTON (DESKTOP) === */
+.collapse-toggle {
+  background: transparent;
+  border: none;
+  color: white;
+  position: absolute;
+  right: -15px;
+  top: 20px;
+  cursor: pointer;
+}
+
+/* === MOBILE HAMBURGER === */
+.mobile-menu-btn {
+  display: none;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 5000;
+}
+
+/* === MOBILE SIDEBAR MODE === */
+.side-nav.open {
+  transform: translateX(0);
+}
+
+/* Close button visible only on mobile */
+.close-menu-btn {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+/* === MOBILE RESPONSIVENESS === */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .side-nav {
+    transform: translateX(-100%);
+    width: 230px;
+  }
+
+  .side-nav.collapsed {
+    width: 230px;
+  }
+
+  .side-nav.open {
+    transform: translateX(0);
+  }
+
+  .close-menu-btn {
+    display: block;
+  }
+}

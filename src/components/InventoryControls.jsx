@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import "../styles/inventory.css";
 import AddItemModal from "./AddItemModal";
@@ -6,29 +6,90 @@ import PrintIcon from "@mui/icons-material/Print";
 import StockOverviewModal from "./StockOverviewModal";
 import ReceiveStockModal from "./ReceiveStockModal";
 
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Tooltip from "@mui/material/Tooltip";
+
+import { useAuth } from "../context/AuthContext";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const InventoryControls = () => {
   const [activeModal, setActiveModal] = useState(null);
+  const { role } = useAuth();
+
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
+
+  const showToast = (message, severity = "info") => {
+    setToast({ open: true, message, severity });
+  };
+
+  const allowed = ["director", "accountant"];
+
+  const isAllowed = (action) => {
+    if (allowed.includes(role)) return true;
+    return action === "receive";
+  };
+
+  const handleAction = (action) => {
+    if (!isAllowed(action)) {
+      showToast("You do not have permission for this action.", "warning");
+      return;
+    }
+    setActiveModal(action);
+  };
+
   return (
     <div className="inventory-controls">
       <h2>Inventory Overview</h2>
 
       <div className="controls-right">
-        {/* STOCK OVERVIEW */}
-        <button className="add-btn" onClick={() => setActiveModal("overview")}>
-          <PrintIcon /> Stock Overview
-        </button>
+        {/* ✅ STOCK OVERVIEW */}
+        <Tooltip
+          title={!isAllowed("overview") ? "Not allowed for your role" : ""}
+          disableHoverListener={isAllowed("overview")}
+        >
+          <span>
+            <button
+              className={`add-btn ${
+                !isAllowed("overview") ? "disabled-btn" : ""
+              }`}
+              onClick={() => handleAction("overview")}
+              disabled={!isAllowed("overview")}
+            >
+              <PrintIcon /> Stock Overview
+            </button>
+          </span>
+        </Tooltip>
 
-        {/* ADD ITEM */}
-        <button className="add-btn" onClick={() => setActiveModal("add")}>
-          <AddIcon /> Add Item
-        </button>
+        {/* ✅ ADD ITEM */}
+        <Tooltip
+          title={!isAllowed("add") ? "Not allowed for your role" : ""}
+          disableHoverListener={isAllowed("add")}
+        >
+          <span>
+            <button
+              className={`add-btn ${!isAllowed("add") ? "disabled-btn" : ""}`}
+              onClick={() => handleAction("add")}
+              disabled={!isAllowed("add")}
+            >
+              <AddIcon /> Add Item
+            </button>
+          </span>
+        </Tooltip>
 
-        {/* RECEIVING STOCK */}
-        <button className="add-btn" onClick={() => setActiveModal("receive")}>
+        {/* ✅ RECEIVING STOCK — allowed for all roles */}
+        <button className="add-btn" onClick={() => handleAction("receive")}>
           <AddIcon /> Receiving Stock
         </button>
 
-        {/* CONDITIONAL MODALS */}
+        {/* ✅ MODALS */}
         {activeModal === "add" && (
           <AddItemModal onClose={() => setActiveModal(null)} />
         )}
@@ -41,6 +102,18 @@ const InventoryControls = () => {
           <ReceiveStockModal onClose={() => setActiveModal(null)} />
         )}
       </div>
+
+      {/* ✅ MUI TOAST */}
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={2500}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity={toast.severity} sx={{ width: "100%" }}>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
