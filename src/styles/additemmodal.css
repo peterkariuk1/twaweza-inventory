@@ -1,0 +1,224 @@
+/* Overlay */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 90vh;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* Modal box */
+.modal-container {
+  width: 650px;
+  background: var(--primary-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  color: var(--secondary-color);
+  animation: fadeIn 0.25s ease-out;
+  z-index: 100;
+}
+
+/* Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  cursor: pointer;
+  font-size: 1.6rem;
+  color: var(--secondary-color);
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 0.6;
+}
+
+/* Body */
+.modal-body {
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Inputs */
+.modal-body input[type="text"],
+.modal-body input[type="number"] {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--secondary-color);
+}
+
+/* Radio group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.radio-option input {
+  margin-right: 0.4rem;
+}
+
+/* Min level */
+.min-level-type {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Footer */
+.modal-footer {
+  margin-top: 1.3rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid var(--secondary-color);
+  padding: 0.6rem 1.3rem;
+  border-radius: 8px;
+  color: var(--secondary-color);
+  cursor: pointer;
+}
+
+.save-btn {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  opacity: 0.8;
+}
+
+/* Scroll styling */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+/* animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overview-block {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.small-print-btn {
+  margin-top: 0.5rem;
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  cursor: pointer;
+}
+.search-box-modal {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.suggest-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-top: 0.3rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.suggest-item {
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+.suggest-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.manual-list-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.manual-item {
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+  color: var(--secondary-color);
+  background: rgba(255, 255, 255, 0.05);
+  transition: 0.2s;
+}
+
+.manual-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.manual-item.selected {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.no-items {
+  padding: 0.5rem;
+  opacity: 0.6;
+}

@@ -1,0 +1,81 @@
+@import "../styles/App.css";
+
+.recent-logs-card {
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--secondary-color);
+  width: 96%;
+}
+
+.logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-box,
+.filter-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+}
+
+.search-box input,
+.filter-box select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: black;
+  margin-left: 0.4rem;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.logs-table th,
+.logs-table td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logs-table th {
+  opacity: 0.8;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.logs-table td {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.view-all-btn {
+  display: block;
+  margin: 1rem auto 0;
+  background: #1976d2;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-all-btn:hover {
+  background: #125ea9;
+}

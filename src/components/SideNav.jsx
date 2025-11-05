@@ -21,7 +21,7 @@ const SideNav = () => {
       </div>
 
       <div className="profile-top">
-        <PersonOutlineIcon sx={{ fontSize: 60 }} className="profile-pic" />
+        <PersonOutlineIcon sx={{ fontSize: 40 }} className="profile-pic" />
         <div>
           <h4>John Doe</h4>
           <p>Accountant</p>
