@@ -4,16 +4,18 @@ import { useAuth } from "../context/AuthContext";
 const ProtectedRoute = ({ children, allowed }) => {
   const { user, role, loading } = useAuth();
 
-  if (loading) return null; // or spinner
+  // Show nothing (or spinner) while loading auth state
+  if (loading) return null;
 
-  // Not logged in → go to login page
-  if (!user) return <Navigate to="/auth" />;
+  //If not logged in → go to login
+  if (!user) return <Navigate to="/auth" replace />;
 
-  // Role not allowed → deny
-  if (allowed && !allowed.includes(role.toLowerCase())) {
-    return <Navigate to="/auth" />;
+  // If role not allowed → go to Forbidden page
+  if (allowed && !allowed.includes(role?.toLowerCase())) {
+    return <Navigate to="/forbidden" replace />;
   }
 
+  // Otherwise render the protected page
   return children;
 };
 

@@ -28,7 +28,7 @@ const SideNav = () => {
     { icon: <WarehouseIcon />, text: "Inventory", to: "/inventory" },
   ];
 
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const capitalizeFirstLetter = (str) => {
