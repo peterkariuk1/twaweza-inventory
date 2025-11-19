@@ -27,6 +27,13 @@ const LoginSignup = () => {
     severity: "info",
   });
 
+  const capitalizeFirstLetter = (str) => {
+    if (typeof str !== "string" || str.length === 0) {
+      return str; // Handle empty strings or non-string inputs
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   const showToast = (message, severity = "info") => {
     setToast({ open: true, message, severity });
   };
@@ -41,7 +48,7 @@ const LoginSignup = () => {
     e.preventDefault();
     setLoading(true);
 
-    const allowedRoles = ["director", "accountant", "storekeeper"];
+    const allowedRoles = ["director", "accountant", "storemanager"];
 
     try {
       let userCredential;
@@ -104,7 +111,10 @@ const LoginSignup = () => {
         }
 
         // ✅ SUCCESS
-        showToast(`Welcome, ${userRole}!`, "success");
+        showToast(
+          `Welcome, ${userRole ? capitalizeFirstLetter(userRole) : ""}!`,
+          "success"
+        );
 
         setTimeout(() => (window.location.href = "/"), 1200);
       }

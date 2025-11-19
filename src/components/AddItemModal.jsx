@@ -8,6 +8,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
@@ -56,6 +57,8 @@ const AddItemModal = ({ onClose }) => {
   const [unitsPerCarton, setUnitsPerCarton] = useState("");
   const [minStockType, setMinStockType] = useState("Units");
   const [minStockValue, setMinStockValue] = useState("");
+
+  const [saving, setSaving] = useState(false); // ✅ NEW
 
   // Toast
   const [toast, setToast] = useState({
@@ -113,23 +116,35 @@ const AddItemModal = ({ onClose }) => {
     if (!itemName || !unitPrice || !unitsPerCarton)
       return showToast("Fill all required fields.", "error");
 
+    setSaving(true); // ✅ Start loading
+
     const productId = generateProductId();
 
-    await addDoc(collection(db, "products"), {
-      productId,
-      category,
-      pages: pages || null,
-      itemName,
-      unitPrice: parseFloat(unitPrice),
-      unitsPerCarton: parseInt(unitsPerCarton),
-      pricePerCarton: parseFloat(pricePerCarton),
-      minStockType,
-      minStockValue: parseInt(minStockValue || 0),
-      createdAt: new Date(),
-    });
+    try {
+      await addDoc(collection(db, "products"), {
+        productId,
+        category,
+        pages: pages || null,
+        itemName,
+        unitPrice: parseFloat(unitPrice),
+        unitsPerCarton: parseInt(unitsPerCarton),
+        pricePerCarton: parseFloat(pricePerCarton),
+        minStockType,
+        minStockValue: parseInt(minStockValue || 0),
+        createdAt: new Date(),
+      });
 
-    showToast("Item saved successfully!", "success");
-    setTimeout(() => onClose(), 800);
+      showToast("Item saved successfully!", "success");
+
+      setTimeout(() => {
+        setSaving(false);
+        onClose();
+      }, 600);
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to save item.", "error");
+      setSaving(false);
+    }
   };
 
   // ✅ Disable SAVE button if form invalid
@@ -219,6 +234,7 @@ const AddItemModal = ({ onClose }) => {
                 type="number"
                 value={unitPrice}
                 onChange={(e) => setUnitPrice(e.target.value)}
+                onWheel={(e) => e.target.blur()}
               />
             </div>
 
@@ -228,6 +244,7 @@ const AddItemModal = ({ onClose }) => {
                 type="number"
                 value={unitsPerCarton}
                 onChange={(e) => setUnitsPerCarton(e.target.value)}
+                onWheel={(e) => e.target.blur()}
               />
             </div>
 
@@ -267,11 +284,12 @@ const AddItemModal = ({ onClose }) => {
                 placeholder={`Minimum in ${minStockType}`}
                 value={minStockValue}
                 onChange={(e) => setMinStockValue(e.target.value)}
+                onWheel={(e) => e.target.blur()}
               />
             </div>
           </div>
 
-          {/* ✅ RIGHT SIDE — LIVE PREVIEW CARD */}
+          {/* RIGHT SIDE — LIVE PREVIEW CARD */}
           <div className="preview-card">
             <h3>Live Preview</h3>
 
@@ -308,15 +326,21 @@ const AddItemModal = ({ onClose }) => {
 
         {/* FOOTER */}
         <div className="modal-footer">
-          <button className="cancel-btn" onClick={onClose}>
+          <button className="cancel-btn" onClick={onClose} disabled={saving}>
             Cancel
           </button>
+
           <button
             className="save-btn"
-            disabled={!isFormValid}
+            disabled={!isFormValid || saving}
             onClick={handleSave}
+            style={{ display: "flex", alignItems: "center", gap: "8px" }}
           >
-            Save Item
+            {saving ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Save Item"
+            )}
           </button>
         </div>
       </div>
@@ -335,3 +359,4 @@ const AddItemModal = ({ onClose }) => {
 };
 
 export default AddItemModal;
+
