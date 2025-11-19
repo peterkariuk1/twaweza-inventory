@@ -1,11 +1,11 @@
-/* === OVERLAY === */
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap");
 .modal-overlay {
   position: fixed;
   z-index: 5000;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 85vh;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
   display: flex;
@@ -15,8 +15,8 @@
 
 /* === MODAL CONTAINER === */
 .modal-container {
-  width: 900px;
-  max-height: 90vh;
+  width: 90vw;
+  max-height: 88vh;
   background: var(--primary-color);
   border-radius: 16px;
   padding: 1rem 1.2rem;
@@ -85,7 +85,7 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.15);
   border: none;
-  padding: 0.6rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 8px;
   color: var(--secondary-color);
   outline: none;
@@ -240,4 +240,79 @@
   .preview-card {
     margin-top: 1rem;
   }
+}
+.selected-product-box {
+  background: rgba(255, 255, 255, 0.537);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selected-product-box strong {
+  font-size: 1rem;
+}
+
+.clear-selected-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  color: rgb(255, 0, 0);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.search-icon-modal {
+  position: absolute;
+  top: 3px;
+}
+.search-box-modal {
+  position: relative;
+}
+
+.clear-selected-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.sp-left p {
+  margin: 2px 0 0 0;
+  font-family: "Google Sans Code";
+}
+/* Make Receive Stock Modal Responsive */
+.receive-modal {
+  max-width: 850px;
+  width: 95%;
+}
+.manual-item {
+  cursor: pointer;
+  padding: 10px;
+  font-family: "Google Sans Code";
+}
+
+@media (max-width: 600px) {
+  .receive-modal {
+    padding: 0.8rem;
+  }
+
+  .manual-item {
+    font-size: 0.7rem;
+    padding: 0.9rem;
+  }
+
+  .search-box-modal input {
+    font-size: 0.85rem;
+  }
+}
+.combined-display {
+  margin-top: 0.4rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #fff;
+  text-align: center;
 }
