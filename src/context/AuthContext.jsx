@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 // ✅ Allowed system roles
-const allowedRoles = ["director", "accountant", "storekeeper"];
+const allowedRoles = ["director", "accountant", "storemanager"];
 
 const AuthContext = createContext(null);
 
