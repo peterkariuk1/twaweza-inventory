@@ -147,7 +147,7 @@ const InventoryTable = () => {
               <th>Unit</th>
               <th>Status</th>
               <th>Last Updated</th>
-              <th></th> {/* actions */}
+              <th></th> 
             </tr>
           </thead>
           <tbody>

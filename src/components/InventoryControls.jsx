@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import "../styles/inventory.css";
 import AddItemModal from "./AddItemModal";
-import PrintIcon from "@mui/icons-material/Print";
-import StockOverviewModal from "./StockOverviewModal";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
 import ReceiveStockModal from "./ReceiveStockModal";
 
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import Tooltip from "@mui/material/Tooltip";
-
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -51,22 +50,12 @@ const InventoryControls = () => {
 
       <div className="controls-right">
         {/* ✅ STOCK OVERVIEW */}
-        <Tooltip
-          title={!isAllowed("overview") ? "Not allowed for your role" : ""}
-          disableHoverListener={isAllowed("overview")}
-        >
-          <span>
-            <button
-              className={`add-btn ${
-                !isAllowed("overview") ? "disabled-btn" : ""
-              }`}
-              onClick={() => handleAction("overview")}
-              disabled={!isAllowed("overview")}
-            >
-              <PrintIcon /> Stock Overview
-            </button>
-          </span>
-        </Tooltip>
+
+        <Link style={{ textDecoration: "none" }} to="/stock">
+          <button className={`add-btn`}>
+            <WarehouseIcon /> Stock Overview
+          </button>
+        </Link>
 
         {/* ✅ ADD ITEM */}
         <Tooltip
@@ -92,10 +81,6 @@ const InventoryControls = () => {
         {/* ✅ MODALS */}
         {activeModal === "add" && (
           <AddItemModal onClose={() => setActiveModal(null)} />
-        )}
-
-        {activeModal === "overview" && (
-          <StockOverviewModal onClose={() => setActiveModal(null)} />
         )}
 
         {activeModal === "receive" && (
