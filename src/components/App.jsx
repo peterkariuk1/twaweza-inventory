@@ -12,6 +12,7 @@ import "../styles/dashboard.css";
 import Products from "../pages/Products";
 import Forbidden from "../pages/Forbidden";
 import StockOverview from "../pages/StockOverview";
+import NoInternetModal from "./NoInternetModal";
 
 function App() {
   const location = useLocation();
@@ -26,6 +27,8 @@ function App() {
       <div className={!hideLayout ? "main-area" : "auth-area"}>
         {/* ✅ SHOW HEADER ONLY IF LOGGED IN */}
         {!hideLayout && <Header />}
+
+        <NoInternetModal/>
 
         {/* ✅ Routes */}
         <Routes>
