@@ -4,7 +4,7 @@
 .orders-page {
   background-color: var(--accent-color);
   height: 90%;
-  width: 100%;
+  width: 96%;
 }
 header {
   display: flex;

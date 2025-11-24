@@ -9,6 +9,10 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { logEvent } from "../utils/Logger";
+import { useAuth } from "../context/AuthContext";
 
 import {
   IconButton,
@@ -49,6 +53,8 @@ const formatTimestamp = (ts) => {
 };
 
 export default function Stock() {
+  const { user } = useAuth();
+
   const [inventory, setInventory] = useState([]); // raw inventory docs
   const [productsMap, setProductsMap] = useState({}); // productId -> product doc
   const [rows, setRows] = useState([]); // joined rows shown in table
@@ -207,11 +213,17 @@ export default function Stock() {
         status = "In Stock"; // 🟢
       }
 
-      // Product label
-      const productLabel =
-        prod?.itemName ||
-        (inv.pages ? `${inv.pages} ${inv.itemName}` : inv.itemName) ||
-        inv.productId;
+      // Page label
+      const pageLabel = inv.pages
+        ? String(inv.pages).toLowerCase().includes("quire")
+          ? inv.pages
+          : `${inv.pages} pgs`
+        : "";
+
+      // Build product label
+      const productLabel = pageLabel
+        ? `${pageLabel} ${prod?.itemName || inv.itemName || inv.productId}`
+        : prod?.itemName || inv.itemName || inv.productId;
 
       return {
         inventoryId: inv.id,
@@ -251,6 +263,11 @@ export default function Stock() {
     );
   });
 
+  function maskMiddle(text) {
+    if (!text || text.length <= 5) return text; // nothing to mask
+    return text.slice(0, 3) + "…" + text.slice(-2);
+  }
+
   // ---------- menu handlers ----------
   const openMenu = (event, row) => {
     setAnchorEl(event.currentTarget);
@@ -258,7 +275,6 @@ export default function Stock() {
   };
   const closeMenu = () => {
     setAnchorEl(null);
-    setSelectedRow(null);
   };
 
   // ---------- delete ----------
@@ -267,9 +283,25 @@ export default function Stock() {
     setOpenDelete(true);
     closeMenu();
   };
+  // ---------- delete with log ----------
   const doDelete = async () => {
     if (!selectedRow) return;
     try {
+      // Log deletion before actually deleting
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "DELETE_INVENTORY",
+        details: {
+          inventoryId: selectedRow.inventoryId,
+          productLabel: selectedRow.productLabel,
+          quantity: selectedRow.quantity,
+          entryType: selectedRow.entryType,
+          store: selectedRow.store,
+          totalUnits: selectedRow.totalUnits,
+        },
+      });
+
       await deleteDoc(doc(db, "inventory", selectedRow.inventoryId));
       setSnack({
         open: true,
@@ -284,7 +316,8 @@ export default function Stock() {
     }
   };
 
-  // ---------- edit ----------
+  // ---------- edit with log ----------
+
   const openEditDialog = (row) => {
     setSelectedRow(row);
     setEditPayload({
@@ -301,25 +334,45 @@ export default function Stock() {
     setSavingEdit(true);
 
     try {
-      // compute new totalUnits based on entryType
       let newQuantity = Number(editPayload.quantity || 0);
       let newTotalUnits = newQuantity;
-
-      // if cartons, multiply by unitsPerCarton (prefer product unitsPerCarton)
       const unitsPerCarton = Number(selectedRow.unitsPerCarton || 0);
+
       if (editPayload.entryType?.toLowerCase() === "cartons") {
         newTotalUnits = newQuantity * (unitsPerCarton || 1);
       }
 
-      const invRef = doc(db, "inventory", selectedRow.inventoryId);
-      await updateDoc(invRef, {
+      const updatedData = {
         quantity: newQuantity,
         totalUnits: newTotalUnits,
         entryType: editPayload.entryType,
         store: editPayload.store,
-        // update timestamp
         timestamp: new Date(),
+      };
+
+      // Build change log
+      const changes = {};
+      Object.keys(updatedData).forEach((key) => {
+        if (selectedRow[key] !== updatedData[key]) {
+          changes[key] = { from: selectedRow[key], to: updatedData[key] };
+        }
       });
+
+      if (Object.keys(changes).length > 0) {
+        await logEvent({
+          userId: user?.uid || "unknown",
+          email: user?.email || "unknown",
+          action: "UPDATE_INVENTORY",
+          details: {
+            inventoryId: selectedRow.inventoryId,
+            productLabel: selectedRow.productLabel,
+            changedFields: changes,
+          },
+        });
+      }
+
+      const invRef = doc(db, "inventory", selectedRow.inventoryId);
+      await updateDoc(invRef, updatedData);
 
       setSnack({
         open: true,
@@ -336,37 +389,92 @@ export default function Stock() {
     }
   };
 
-  // ---------- PDF and Print ----------
-  const handleDownload = () => {
-    // Use a simple table HTML approach for printing; you can replace with jsPDF if you prefer
-    const rowsHtml = filteredRows
-      .map((r) => {
-        const name = r.productLabel;
-        const cat = r.category;
-        const store = r.store;
-        const qty = r.quantity;
-        const entryType = r.entryType;
-        const totalUnits = r.totalUnits;
-        const updatedBy = r.updatedBy;
-        const ts = formatTimestamp(r.timestamp);
-        const stockValue = (r.stockValue || 0).toLocaleString();
-        const status = r.status;
-        return `<tr>
-          <td>${name}</td>
-          <td>${cat}</td>
-          <td>${store}</td>
-          <td>${qty}</td>
-          <td>${entryType}</td>
-          <td>${totalUnits}</td>
-          <td>${updatedBy}</td>
-          <td>${ts}</td>
-          <td>KES ${stockValue}</td>
-          <td>${status}</td>
-        </tr>`;
-      })
-      .join("");
+  // ---------- Download PDF ----------
+  const handleDownloadPDF = async () => {
+    try {
+      const docx = new jsPDF();
+      docx.text("Stock Breakdown", 14, 16);
 
-    const html = `
+      autoTable(docx, {
+        startY: 22,
+        head: [
+          [
+            "Product Name",
+            "Category",
+            "Store",
+            "Quantity",
+            "Entry Type",
+            "Total Units",
+            "Updated By",
+            "Timestamp",
+            "Stock Value",
+            "Status",
+          ],
+        ],
+        body: filteredRows.map((r) => [
+          r.productLabel,
+          r.category,
+          r.store,
+          r.quantity,
+          r.entryType,
+          r.totalUnits,
+          r.updatedBy,
+          formatTimestamp(r.timestamp),
+          r.stockValue?.toLocaleString(),
+          r.status,
+        ]),
+      });
+
+      const filename = `stock_breakdown_${new Date()
+        .toISOString()
+        .slice(0, 10)}.pdf`;
+      docx.save(filename);
+
+      // Log download
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "DOWNLOAD_STOCK_PDF",
+        details: {
+          filename,
+          rowsCount: filteredRows.length,
+          message: "Download the stock table as PDF",
+        },
+      });
+
+      setSnack({ open: true, message: "PDF downloaded.", severity: "success" });
+    } catch (err) {
+      console.error(err);
+      setSnack({
+        open: true,
+        message: "PDF download failed.",
+        severity: "error",
+      });
+    }
+  };
+
+  // ---------- Print Table ----------
+  const handlePrint = async () => {
+    try {
+      const rowsHtml = filteredRows
+        .map((r) => {
+          const ts = formatTimestamp(r.timestamp);
+          return `<tr>
+          <td>${r.productLabel}</td>
+          <td>${r.category}</td>
+          <td>${r.store}</td>
+          <td>${r.quantity}</td>
+          <td>${r.entryType}</td>
+          <td>${r.totalUnits}</td>
+          <td>${r.updatedBy}</td>
+          <td>${ts}</td>
+          <td>KES ${r.stockValue?.toLocaleString()}</td>
+          <td>${r.status}</td>
+        </tr>`;
+        })
+        .join("");
+
+      const html = `
       <html>
         <head>
           <title>Stock Breakdown</title>
@@ -396,31 +504,48 @@ export default function Stock() {
       </html>
     `;
 
-    const newWin = window.open("", "_blank");
-    newWin.document.write(html);
-    newWin.document.close();
-    newWin.print();
+      const newWin = window.open("", "_blank");
+      newWin.document.write(html);
+      newWin.document.close();
+      newWin.print();
+
+      // Log print
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "PRINT_STOCK",
+        details: {
+          message: "Printed stock table",
+        },
+      });
+
+      setSnack({
+        open: true,
+        message: "Print dialog opened.",
+        severity: "success",
+      });
+    } catch (err) {
+      console.error(err);
+      setSnack({ open: true, message: "Print failed.", severity: "error" });
+    }
   };
 
   // ---------- render ----------
   return (
-    <div
-      className="products-page"
-      style={{ padding: isMobile ? "1rem" : "1.5rem" }}
-    >
+    <div className="products-page">
       <div className="products-controls" style={{ marginBottom: 12 }}>
         <div style={{ display: "flex", gap: 8 }}>
           <Button
             variant="contained"
             startIcon={<PictureAsPdf />}
-            onClick={handleDownload}
+            onClick={handleDownloadPDF}
           >
             Download PDF
           </Button>
           <Button
             variant="outlined"
             startIcon={<PrintIcon />}
-            onClick={handleDownload}
+            onClick={handlePrint}
           >
             Print
           </Button>
@@ -459,7 +584,6 @@ export default function Stock() {
                 <th>Category</th>
                 <th>Store</th>
                 <th>Quantity</th>
-                <th>Entry Type</th>
                 <th>Total Units</th>
                 <th>Updated By</th>
                 <th>Timestamp</th>
@@ -469,7 +593,7 @@ export default function Stock() {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="stock-table-body">
               {filteredRows.length === 0 ? (
                 <tr>
                   <td colSpan={11} style={{ textAlign: "center", padding: 24 }}>
@@ -482,10 +606,13 @@ export default function Stock() {
                     <td>{r.productLabel}</td>
                     <td>{r.category}</td>
                     <td>{r.store}</td>
-                    <td>{r.quantity}</td>
-                    <td>{r.entryType}</td>
+                    <td>
+                      {r.quantity} {r.entryType}
+                    </td>
                     <td>{r.totalUnits}</td>
-                    <td>{r.updatedBy}</td>
+                    <td className="masked-cell" title={r.updatedBy}>
+                      {maskMiddle(r.updatedBy)}
+                    </td>
                     <td>{formatTimestamp(r.timestamp)}</td>
                     <td>KES {(r.stockValue || 0).toLocaleString()}</td>
                     <td

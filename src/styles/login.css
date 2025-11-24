@@ -40,7 +40,7 @@ label {
   margin-bottom: 0.3rem;
 }
 
-input {
+.login-page input {
   width: 100%;
   padding: 0.7rem;
   background: rgba(255,255,255,0.15);

@@ -8,6 +8,7 @@ import MuiAlert from "@mui/material/Alert";
 import { db } from "../firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
+import { logEvent } from "../utils/Logger";
 
 import "../styles/addItemModal.css";
 
@@ -20,7 +21,7 @@ const ReceiveStockModal = ({ onClose }) => {
 
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
-  const [entryType, setEntryType] = useState("Units");
+  const [entryType, setEntryType] = useState("Cartons");
   const [quantity, setQuantity] = useState("");
   const [store, setStore] = useState("Main Store");
 
@@ -95,7 +96,7 @@ const ReceiveStockModal = ({ onClose }) => {
     setSelectedItem(null);
     setSearch("");
     setQuantity("");
-    setEntryType("Units");
+    setEntryType("Cartons");
   };
 
   // Validation for the Save button
@@ -121,6 +122,21 @@ const ReceiveStockModal = ({ onClose }) => {
 
     setSaving(true);
     try {
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "ADD_STOCK",
+        details: {
+          itemName: selectedItem.itemName,
+          category: selectedItem.category,
+          pages: selectedItem.pages || null,
+          entryType,
+          quantity: Number(quantity), // as entered (units or cartons)
+          totalUnits: calculatedUnits, // always units
+          unitsPerCarton: selectedItem.unitsPerCarton || null,
+          store,
+        },
+      });
       const entryData = {
         inventoryEntryId: generateInventoryEntryId(),
 
@@ -212,7 +228,7 @@ const ReceiveStockModal = ({ onClose }) => {
                         setSelectedItem(prod);
                         setSearch("");
                         setQuantity("");
-                        setEntryType("Units");
+                        setEntryType("Cartons");
                       }}
                     >
                       <strong className="manual-list-text">
