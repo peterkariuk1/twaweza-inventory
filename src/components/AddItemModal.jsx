@@ -12,7 +12,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 import "../styles/additemmodal.css";
+import { logEvent } from "../utils/Logger";
 
 // Toast Component
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -119,8 +121,20 @@ const AddItemModal = ({ onClose }) => {
     setSaving(true); // ✅ Start loading
 
     const productId = generateProductId();
+    const user = auth.currentUser;
 
     try {
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "ADD_PRODUCT",
+        details: {
+          productId,
+          category,
+          pages: pages || null,
+          itemName,
+        },
+      });
       await addDoc(collection(db, "products"), {
         productId,
         category,
@@ -359,4 +373,3 @@ const AddItemModal = ({ onClose }) => {
 };
 
 export default AddItemModal;
-

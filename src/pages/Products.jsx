@@ -30,6 +30,8 @@ import { MoreVert, Search, PictureAsPdf, Print } from "@mui/icons-material";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { db } from "../firebase";
+import { useAuth } from "../context/AuthContext";
+import { logEvent } from "../utils/Logger";
 import {
   collection,
   onSnapshot,
@@ -40,12 +42,15 @@ import {
 import "../styles/products.css";
 
 export default function Products() {
+  const { user } = useAuth();
+
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedProd, setSelectedProd] = useState(null);
+  const [originalProd, setOriginalProd] = useState({});
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -86,6 +91,12 @@ export default function Products() {
     setFiltered(data);
   }, [search, sort, products]);
 
+  const handleOpenEdit = (product) => {
+    setSelectedProd(product);
+    setOriginalProd(product); // <-- NEW!
+    setOpenEdit(true);
+  };
+
   const capitalizeFirstLetter = (str) => {
     if (typeof str !== "string" || str.length === 0) {
       return str; // Handle empty strings or non-string inputs
@@ -96,7 +107,23 @@ export default function Products() {
   // 🗑️ Delete Product
   const handleDelete = async () => {
     try {
+      const deletedData = { ...selectedProd }; // snapshot BEFORE deletion
+
+      // 1. Delete from Firestore
       await deleteDoc(doc(db, "products", selectedProd.id));
+
+      // 2. Log delete event with full product details
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "DELETE_PRODUCT",
+        details: {
+          productId: deletedData.id,
+          deletedFields: deletedData,
+        },
+      });
+
+      // 3. UI feedback
       setOpenDelete(false);
       setSnackbar({
         open: true,
@@ -104,6 +131,7 @@ export default function Products() {
         type: "success",
       });
     } catch (err) {
+      console.error(err);
       setSnackbar({
         open: true,
         message: "Error deleting product.",
@@ -112,7 +140,7 @@ export default function Products() {
     }
   };
 
-  // ✏️ Handle Edit Save
+  // Handle Edit Save
   const handleSaveEdit = async () => {
     try {
       const updated = {
@@ -126,7 +154,38 @@ export default function Products() {
         pricePerCarton:
           Number(selectedProd.unitPrice) * Number(selectedProd.unitsPerCarton),
       };
+
+      // 🔍 1. Build difference log (only changed fields)
+      const changes = {};
+      Object.keys(updated).forEach((key) => {
+        const before = originalProd[key];
+        const after = updated[key];
+
+        if (before !== after) {
+          changes[key] = {
+            from: before,
+            to: after,
+          };
+        }
+      });
+
+      // Only log if something actually changed
+      if (Object.keys(changes).length > 0) {
+        await logEvent({
+          userId: user?.uid || "unknown",
+          email: user?.email || "unknown",
+          action: "UPDATE_STOCK",
+          details: {
+            productId: selectedProd.id,
+            itemName: selectedProd.itemName,
+            changedFields: changes,
+          },
+        });
+      }
+
+      // 🔥 2. Apply update to Firestore
       await updateDoc(doc(db, "products", selectedProd.id), updated);
+
       setOpenEdit(false);
       setSnackbar({
         open: true,
@@ -134,6 +193,7 @@ export default function Products() {
         type: "success",
       });
     } catch (err) {
+      console.error(err);
       setSnackbar({
         open: true,
         message: "Error updating product.",
@@ -143,44 +203,76 @@ export default function Products() {
   };
 
   // 📄 Download PDF (Table Only)
-  const handleDownload = () => {
-    const docx = new jsPDF();
-    docx.text("Products Breakdown", 14, 16);
-    autoTable(docx, {
-      startY: 22,
-      head: [
-        [
-          "Product Name",
-          "Category",
-          "Unit Price",
-          "Units/Carton",
-          "Price/Carton",
-          "Min Stock",
-          "Product ID",
+  const handleDownload = async () => {
+    try {
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "DOWNLOAD_PRODUCTS_PDF",
+        details: {
+          message: "Downloaded the products table as PDF",
+        },
+      });
+
+      const docx = new jsPDF();
+      docx.text("Products Breakdown", 14, 16);
+      autoTable(docx, {
+        startY: 22,
+        head: [
+          [
+            "Product Name",
+            "Category",
+            "Unit Price",
+            "Units/Carton",
+            "Price/Carton",
+            "Min Stock",
+            "Product ID",
+          ],
         ],
-      ],
-      body: filtered.map((p) => [
-        p.pages
-          ? p.pages.toUpperCase().includes("QUIRE")
-            ? `${p.pages} ${p.itemName}`
-            : `${p.pages}pgs ${p.itemName}`
-          : p.itemName,
-        p.category,
-        p.unitPrice,
-        p.unitsPerCarton,
-        p.unitPrice * p.unitsPerCarton,
-        `${p.minStockValue} (${p.minStockType})`,
-        p.productId,
-      ]),
-    });
-    docx.save("twaweza_products_breakdown.pdf");
+        body: filtered.map((p) => [
+          p.pages
+            ? p.pages.toUpperCase().includes("QUIRE")
+              ? `${p.pages} ${p.itemName}`
+              : `${p.pages}pgs ${p.itemName}`
+            : p.itemName,
+          p.category,
+          p.unitPrice,
+          p.unitsPerCarton,
+          p.unitPrice * p.unitsPerCarton,
+          `${p.minStockValue} (${p.minStockType})`,
+          p.productId,
+        ]),
+      });
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      docx.save(`twaweza_products_breakdown_${today}.pdf`);
+      setSnackbar({
+        open: true,
+        message: "PDF downloaded successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Error Logging PDF Download!",
+        type: "error",
+      });
+    }
   };
 
   // 🖨️ Print Only Table
-  const handlePrint = () => {
-    const printContents = printRef.current.innerHTML;
-    const newWin = window.open("", "_blank");
-    newWin.document.write(`
+  const handlePrint = async () => {
+    try {
+      await logEvent({
+        userId: user?.uid || "unknown",
+        email: user?.email || "unknown",
+        action: "PRINT_PRODUCTS_PDF",
+        details: {
+          message: "Printed the products table as PDF",
+        },
+      });
+      const printContents = printRef.current.innerHTML;
+      const newWin = window.open("", "_blank");
+      newWin.document.write(`
       <html>
         <head>
           <title>Products Breakdown</title>
@@ -198,8 +290,20 @@ export default function Products() {
         </body>
       </html>
     `);
-    newWin.document.close();
-    newWin.print();
+      newWin.document.close();
+      newWin.print();
+      setSnackbar({
+        open: true,
+        message: "Printing PDF...",
+        type: "success",
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Error printing PDF!",
+        type: "error",
+      });
+    }
   };
 
   if (loading) {
@@ -340,7 +444,7 @@ export default function Products() {
       >
         <MenuItem
           onClick={() => {
-            setOpenEdit(true);
+            handleOpenEdit(selectedProd);
             setAnchorEl(null);
           }}
         >
@@ -388,6 +492,7 @@ export default function Products() {
             label="Category"
             fullWidth
             value={selectedProd?.category || ""}
+            disabled
             onChange={(e) =>
               setSelectedProd({ ...selectedProd, category: e.target.value })
             }
@@ -414,11 +519,16 @@ export default function Products() {
             margin="dense"
             label="Min Stock Type"
             fullWidth
-            value={selectedProd?.minStockType || ""}
+            select
+            value={selectedProd?.minStockType || "Units"}
             onChange={(e) =>
               setSelectedProd({ ...selectedProd, minStockType: e.target.value })
             }
-          />
+          >
+            <MenuItem value="Units">Units</MenuItem>
+            <MenuItem value="Cartons">Cartons</MenuItem>
+          </TextField>
+
           <TextField
             margin="dense"
             label="Min Stock Value"
@@ -478,7 +588,12 @@ export default function Products() {
       {/* Snackbar feedback */}
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
+        ClickAwayListenerProps={{
+          mouseEvent: "onClick", // PC close when clicking outside
+          touchEvent: "onTouchEnd", // mobile swipe / touch dismissal
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
       >
         <Alert severity={snackbar.type}>{snackbar.message}</Alert>
