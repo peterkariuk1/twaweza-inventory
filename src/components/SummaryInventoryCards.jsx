@@ -44,8 +44,8 @@ const SummaryCards = () => {
   return (
     <div className="summary-cards">
       {cards.map((card, i) => (
-        <Link style={{ textDecoration: "none" }} to={card.link}>
-          <div className="summary-card" key={i}>
+        <Link style={{ textDecoration: "none" }} to={card.link} key={i}>
+          <div className="summary-card">
             <div className="icon-area">{card.icon}</div>
             <div className="text-area">
               <p className="card-title">{card.title}</p>
