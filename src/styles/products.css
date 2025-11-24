@@ -40,6 +40,23 @@
   margin-top: 4rem;
 }
 
+.stock-table-body tr{
+  font-size: 12px;
+  border-bottom: 2px solid black;
+  text-align: center;
+}
+.masked-cell{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.products-table thead tr th{
+  font-size: .8rem;
+}
+
+
 @media (max-width: 768px) {
   .products-page {
     padding: 1rem;
