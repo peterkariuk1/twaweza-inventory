@@ -5,7 +5,7 @@ import SouthIcon from "@mui/icons-material/South";
 import bgVideo from "../assets/bgvid.mp4";
 import PersonIcon from "@mui/icons-material/Person";
 
-const OrdersDash = () => {
+const OrdersDash = ({ monthCount, todayCount, difference, topClients }) => {
   return (
     <div className="orders-cards">
       <div className="month-card">
@@ -25,30 +25,26 @@ const OrdersDash = () => {
               <p>Orders this Month</p>
             </div>
             <div className="mid">
-              <h2>201</h2>
+              <h2>{monthCount}</h2>
             </div>
-            <div className="bottom">
-              <NorthIcon sx={{ fontSize: 15, color: "#00d000" }} />
-              <p>
-                6.2 % <span>since last month</span>
-              </p>
-            </div>
+            <div className="bottom"></div>
           </div>
           <div className="right">
             <p>Top Clients</p>
             <ul>
-              <li>
-                <PersonIcon sx={{ fontSize: 14, marginRight: "3px" }} />
-                Example 1 <span> Goods bought</span>
-              </li>
-              <li>
-                <PersonIcon sx={{ fontSize: 14, marginRight: "3px" }} />
-                Example 2 <span> Goods bought</span>
-              </li>
-              <li>
-                <PersonIcon sx={{ fontSize: 14, marginRight: "3px" }} />
-                Example 3 <span> Goods bought</span>
-              </li>
+              {topClients.length > 0 ? (
+                topClients.map((c, index) => (
+                  <li key={index}>
+                    <PersonIcon sx={{ fontSize: 14, marginRight: "3px" }} />
+                    {c.client.length > 9
+                      ? c.client.slice(0, 9) + "..."
+                      : c.client}{" "}
+                    <span> {c.total.toLocaleString()} units bought</span>
+                  </li>
+                ))
+              ) : (
+                <li>No client data</li>
+              )}
             </ul>
           </div>
         </div>
@@ -60,12 +56,12 @@ const OrdersDash = () => {
             <p>Today's Orders</p>
           </div>
           <div className="mid">
-            <h2>12</h2>
+            <h2>{todayCount}</h2>
           </div>
           <div className="bottom">
-            <SouthIcon sx={{ fontSize: 15, color: "#ff2600ff" }} />
             <p>
-              0.2 % <span>since yesterday</span>
+              {difference}
+              <span> since yesterday</span>
             </p>
           </div>
         </div>
