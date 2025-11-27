@@ -1,8 +1,18 @@
+import { useState, useEffect } from "react";
 import "../styles/subpages.css";
-import SouthIcon from "@mui/icons-material/South";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import { computeDashboardStockSummary } from "../utils/StockSummary";
+import LowStockSlider from "./LowStockSlider";
 const StockDash = () => {
+  const [summary, setSummary] = useState(null);
+
+  useEffect(() => {
+    computeDashboardStockSummary().then((res) => setSummary(res));
+  }, []);
+
+  if (!summary) return "Loading…";
+
   return (
     <div className="stock-cards">
       <div className="stock-categories">
@@ -14,14 +24,9 @@ const StockDash = () => {
             </div>
             <div className="mid">
               <h2>
-                88<span>Cartons</span>
+                {summary.jiwaCartons.toLocaleString()}
+                <span>Cartons</span>
               </h2>
-            </div>
-            <div className="bottom">
-              <SouthIcon sx={{ fontSize: 15, color: "#ff2600ff" }} />
-              <p>
-                0.2 % <span>since last month</span>
-              </p>
             </div>
           </div>
         </div>
@@ -33,14 +38,9 @@ const StockDash = () => {
             </div>
             <div className="mid">
               <h2>
-                31<span>Cartons</span>
+                {summary.bellCartons.toLocaleString()}
+                <span>Cartons</span>
               </h2>
-            </div>
-            <div className="bottom">
-              <SouthIcon sx={{ fontSize: 15, color: "#ff2600ff" }} />
-              <p>
-                0.2 % <span>since last month</span>
-              </p>
             </div>
           </div>
         </div>
@@ -49,8 +49,8 @@ const StockDash = () => {
             <WarningAmberIcon sx={{ color: "#ff2600" }} />
             <p>Minimum Stock Alerts</p>
           </div>
-          <div className="mid">
-            <p>No alerts at the moment</p>
+          <div className="stock-slider-wrapper">
+           <LowStockSlider items={summary.lowStockItems} />
           </div>
         </div>
       </div>
