@@ -68,7 +68,7 @@ const InventoryControls = () => {
               onClick={() => handleAction("add")}
               disabled={!isAllowed("add")}
             >
-              <AddIcon /> Add Item
+              <AddIcon /> Add Product
             </button>
           </span>
         </Tooltip>

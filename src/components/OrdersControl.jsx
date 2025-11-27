@@ -9,14 +9,14 @@ const OrdersControls = () => {
   return (
     <>
       <div className="orders-controls">
-        <h2>Orders Management</h2>
+        <h4>Orders Management</h4>
         <div className="orders-controls-right">
           <button className="orders-btn primary" onClick={() => setOpen(true)}>
             <AddIcon /> New Order
           </button>
-          <button className="orders-btn secondary">
+          {/* <button className="orders-btn secondary">
             <PrintIcon /> Print Report
-          </button>
+          </button> */}
         </div>
       </div>
 

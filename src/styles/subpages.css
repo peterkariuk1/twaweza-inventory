@@ -108,13 +108,13 @@ header div {
   font-weight: 700;
   font-size: 10px;
   margin-bottom: 0px;
-  color: #00d000;
+  color: rgb(80, 0, 81);
 }
 .today-card .left .bottom p {
   font-weight: 700;
   font-size: 10px;
   margin-bottom: 0px;
-  color: #ff2600ff;
+  color: rgb(80, 0, 81);
 }
 .content .right {
   padding-left: 10px;
@@ -145,4 +145,8 @@ header div {
 .stock-categories {
   display: flex;
   gap: 10px;
+}
+
+.stock-slider-wrapper{
+  width: 400px;
 }

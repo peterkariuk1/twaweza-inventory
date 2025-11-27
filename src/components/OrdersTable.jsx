@@ -1,31 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase";
 import "../styles/orders.css";
 
-const OrdersTable = ({ onOpenOrderModal }) => {
-  const [orders, setOrders] = useState([]);
+const OrdersTable = ({ onOpenOrderModal, orders}) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 15; // Adjust as needed
 
   // --------------- REAL-TIME LISTENER ----------------
-  useEffect(() => {
-    const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map((d) => ({
-        id: d.id,
-        ...d.data(),
-      }));
-      setOrders(list);
-    });
-
-    return () => unsub();
-  }, []);
 
   // --------------- SEARCH + FILTER ----------------
   const filtered = useMemo(() => {
@@ -35,16 +20,27 @@ const OrdersTable = ({ onOpenOrderModal }) => {
 
     if (search.trim()) {
       const s = search.toLowerCase();
-      res = res.filter(
-        (o) =>
+
+      res = res.filter((o) => {
+        // Build a normalized searchable date string
+        const date = o.timestamp?.toDate();
+        const searchableDate = date
+          ? `${date.getFullYear()} ${date
+              .toLocaleString("en-US", { month: "short" })
+              .toLowerCase()} ${date.getDate()}`
+          : "";
+
+        return (
           o.customerName?.toLowerCase().includes(s) ||
           o.orderNo?.toString().includes(s) ||
-          o.invoiceNo?.toString().includes(s)
-      );
+          o.invoiceNo?.toString().includes(s) ||
+          searchableDate.includes(s)
+        );
+      });
     }
 
-    return res;
-  }, [orders, search, filter]);
+    return res; // <-- final return
+  }, [orders, filter, search]);
 
   // --------------- PAGINATION ----------------
   const paginated = useMemo(() => {
@@ -102,12 +98,25 @@ const OrdersTable = ({ onOpenOrderModal }) => {
   const truncate = (txt) =>
     txt?.length > 10 ? txt.substring(0, 10) + "..." : txt;
 
+  function capitalizeFirstLetter(string) {
+    if (!string) return ""; // Handle empty or null strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  // Example Usage:
+  const example = "javascript";
+  const result = capitalizeFirstLetter(example);
+  console.log(result); // Output: Javascript
+
   // --------------- RENDER BLOCK ----------------
   const renderSection = (label, items) =>
     items.length > 0 && (
       <>
         <tr className="date-separator">
-          <td colSpan="7">{label}</td>
+          <td colSpan="8">
+            {" "}
+            ---------------------------- {label} ----------------------------
+          </td>
         </tr>
         {items.map((order) => (
           <tr
@@ -118,7 +127,10 @@ const OrdersTable = ({ onOpenOrderModal }) => {
             <td>{order.orderNo}</td>
             <td>{order.invoiceNo}</td>
             <td>{order.customerName}</td>
-            <td>{truncate(order.items[0]?.itemName || "—")}</td>
+            <td>
+              {capitalizeFirstLetter(truncate(order.items[0]?.itemName || "—"))}
+              ...
+            </td>
             <td>{order.items.length}</td>
             <td>{getStoreSource(order.items)}</td>
             <td>

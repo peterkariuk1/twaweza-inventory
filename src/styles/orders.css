@@ -1,7 +1,7 @@
 .orders-page {
   color: var(--secondary-color);
   padding: 1rem;
-  background: var(--primary-color);
+  background: var(--accent-color);
 }
 
 /* Controls */
@@ -10,12 +10,19 @@
   justify-content: space-between;
   align-items: center;
 
-  padding: 0.6rem 1rem;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(8px);
 
   border-radius: 14px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
+
+  padding: 0.45rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.orders-controls h4 {
+  margin: 4px;
 }
 
 .orders-controls-right {
@@ -24,7 +31,7 @@
   gap: 1rem;
 }
 
-.orders-table-container .top{
+.orders-table-container .top {
   display: flex;
   justify-content: space-between;
 }
@@ -32,11 +39,13 @@
 .orders-filter-box {
   display: flex;
   align-items: center;
-  background: #6b6b6b2e;
+  background: #fdfdfde5;
   padding: 0.35rem 0.6rem;
   border-radius: 8px;
 }
-
+.orders-search-box input{
+  padding-right: 10px;
+}
 .orders-search-box input,
 .orders-filter-box select {
   border: none;
@@ -75,21 +84,27 @@
   opacity: 0.85;
 }
 
+.date-separator td{
+  font-weight: 600;
+  background-color: #d1d1d156;
+  padding: 2px;
+}
+
 /* Summary Cards */
 .orders-summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
 }
 
 .orders-summary-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
 
   background: rgba(255, 255, 255, 0.06);
-  padding: 1rem;
+  padding: 0.6rem;
   border-radius: 12px;
 
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
@@ -105,6 +120,9 @@
   margin: 0;
   opacity: 0.85;
 }
+.orders-summary-text h3 {
+  margin: 8px;
+}
 
 /* Orders Table */
 .orders-table-container h3 {
@@ -112,23 +130,45 @@
 }
 
 .orders-table-wrapper {
-  max-height: 350px;
+  max-height: 280px;
   overflow-y: auto;
   border-radius: 10px;
+  margin-top: 3px;
 }
 
 .orders-table {
   width: 100%;
   border-collapse: collapse;
 }
-
+.orders-table thead tr th {
+  text-align: center;
+  font-size: 13px;
+}
+.orders-table tbody tr td {
+  text-align: center;
+  color: var(--dark-color);
+  font-size: 12px;
+}
 .orders-table thead {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(219, 225, 255);
+  position: sticky;
+  top: 0;
+}
+.orders-table th{
+    padding: 0.3rem 1rem;
+
+}
+.order-row td{
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+
+}
+.order-row:hover{
+  background-color: #ea1c1cd1;
 }
 
 .orders-table th,
 .orders-table td {
-  padding: 0.6rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -142,11 +182,26 @@
   font-weight: 600;
 }
 
-.status-pending { background:#ffc10733; color:#ffc107; }
-.status-processing { background:#42a5f533; color:#42a5f5; }
-.status-completed { background:#4caf5033; color:#4caf50; }
-.status-dispatched { background:#7e57c233; color:#7e57c2; }
-.status-cancelled { background:#e5393533; color:#e53935; }
+.status-pending {
+  background: #ffc10733;
+  color: #ffc107;
+}
+.status-processing {
+  background: #42a5f533;
+  color: #42a5f5;
+}
+.status-completed {
+  background: #4caf5033;
+  color: #4caf50;
+}
+.status-dispatched {
+  background: #7e57c233;
+  color: #7e57c2;
+}
+.status-cancelled {
+  background: #e5393533;
+  color: #e53935;
+}
 
 .order-actions-icon {
   cursor: pointer;
@@ -158,6 +213,18 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.order-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3; /* make sure high */
+}
 
 /* Mobile */
 @media (max-width: 768px) {

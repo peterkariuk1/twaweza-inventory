@@ -38,9 +38,11 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  where,
+  query,
+  getDocs
 } from "firebase/firestore";
 import "../styles/products.css";
-
 export default function Products() {
   const { user } = useAuth();
 
@@ -107,12 +109,35 @@ export default function Products() {
   // 🗑️ Delete Product
   const handleDelete = async () => {
     try {
+      if (!selectedProd?.id) return;
+
+      // 1️⃣ Check if the product still exists inside the inventory
+      const invQuery = query(
+        collection(db, "inventory"),
+        where("productId", "==", selectedProd.productId)
+      );
+
+      const invSnap = await getDocs(invQuery);
+
+      if (!invSnap.empty) {
+        // Product found in inventory → Block deletion
+        setSnackbar({
+          open: true,
+          message:
+            "This product still exists in the inventory. Remove it from stock before deleting.",
+          type: "warning",
+        });
+        return; // ❌ Stop deletion
+      }
+
+      // Product is NOT in inventory → Safe to delete
+
       const deletedData = { ...selectedProd }; // snapshot BEFORE deletion
 
-      // 1. Delete from Firestore
+      // 2️⃣ Delete from Firestore
       await deleteDoc(doc(db, "products", selectedProd.id));
 
-      // 2. Log delete event with full product details
+      // 3️⃣ Log delete event with full product details
       await logEvent({
         userId: user?.uid || "unknown",
         email: user?.email || "unknown",
@@ -123,7 +148,7 @@ export default function Products() {
         },
       });
 
-      // 3. UI feedback
+      // 4️⃣ UI feedback
       setOpenDelete(false);
       setSnackbar({
         open: true,

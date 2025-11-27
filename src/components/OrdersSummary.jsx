@@ -3,11 +3,28 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-const OrdersSummary = () => {
+import { computeOrderStats } from "../utils/orderStats";
+
+const OrdersSummary = ({ orders }) => {
+  const { todayCount, pendingCount, dispatchedCount } =
+    computeOrderStats(orders);
+
   const cards = [
-    { title: "Orders Today", value: 12, icon: <LocalShippingIcon /> },
-    { title: "Pending Orders", value: 4, icon: <PendingActionsIcon /> },
-    { title: "Completed Orders", value: 7, icon: <CheckCircleIcon /> },
+    {
+      title: "Orders Today",
+      value: todayCount,
+      icon: <LocalShippingIcon />,
+    },
+    {
+      title: "Pending Orders",
+      value: pendingCount,
+      icon: <PendingActionsIcon style={{ color: "orange" }} />,
+    },
+    {
+      title: "Dispatched Orders",
+      value: dispatchedCount,
+      icon: <CheckCircleIcon style={{ color: "green" }} />,
+    },
   ];
 
   return (

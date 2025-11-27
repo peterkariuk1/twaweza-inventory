@@ -300,71 +300,71 @@ const NewOrderModal = ({ onClose }) => {
     }
   };
 
-const handleSaveAndPrintDraft = async () => {
-  if (!validate()) return;
-  setSaving(true);
+  const handleSaveAndPrintDraft = async () => {
+    if (!validate()) return;
+    setSaving(true);
 
-  try {
-    await handleSave();
+    try {
+      await handleSave();
 
-    const dateStr = new Date().toLocaleDateString();
-    const MIN_ROWS = 8;
+      const dateStr = new Date().toLocaleDateString();
+      const MIN_ROWS = 8;
 
-    // Build rows including entry type in QTY column
-    const rowsArray = Object.keys(selected)
-      .map((id) => {
-        const inv = inventory.find((i) => i.id === id);
-        const sel = selected[id];
-        if (!inv || !sel) return null;
+      // Build rows including entry type in QTY column
+      const rowsArray = Object.keys(selected)
+        .map((id) => {
+          const inv = inventory.find((i) => i.id === id);
+          const sel = selected[id];
+          if (!inv || !sel) return null;
 
-        const particulars = inv.pages
-          ? `${inv.itemName} • ${inv.pages}${
-              inv.pages.toUpperCase().includes("QUIRE") ? "" : " pages"
-            } • ${inv.category}`
-          : `${inv.itemName} • ${inv.category}`;
+          const particulars = inv.pages
+            ? `${inv.itemName} • ${inv.pages}${
+                inv.pages.toUpperCase().includes("QUIRE") ? "" : " pages"
+              } • ${inv.category}`
+            : `${inv.itemName} • ${inv.category}`;
 
-        const qtyWithType = `${sel.qty} (${sel.entryType})`;
+          const qtyWithType = `${sel.qty} (${sel.entryType})`;
 
-        return `
+          return `
         <tr>
           <td>${qtyWithType}</td>
           <td>${computeOrderUnits(inv, sel)}</td>
           <td>${capitalizeFirstLetter(particulars)}</td>
         </tr>
       `;
-      })
-      .filter(Boolean);
+        })
+        .filter(Boolean);
 
-    // Calculate totals
-    const totalCartons = Object.keys(selected).reduce((sum, id) => {
-      const sel = selected[id];
-      return sel.entryType === "Cartons" ? sum + Number(sel.qty || 0) : sum;
-    }, 0);
+      // Calculate totals
+      const totalCartons = Object.keys(selected).reduce((sum, id) => {
+        const sel = selected[id];
+        return sel.entryType === "Cartons" ? sum + Number(sel.qty || 0) : sum;
+      }, 0);
 
-    const totalUnits = Object.keys(selected).reduce((sum, id) => {
-      const inv = inventory.find((i) => i.id === id);
-      const sel = selected[id];
-      if (!inv || !sel) return sum;
-      return sum + computeOrderUnits(inv, sel);
-    }, 0);
+      const totalUnits = Object.keys(selected).reduce((sum, id) => {
+        const inv = inventory.find((i) => i.id === id);
+        const sel = selected[id];
+        if (!inv || !sel) return sum;
+        return sum + computeOrderUnits(inv, sel);
+      }, 0);
 
-    // -------------------------------
-    // ✅ ADD BLANK ROWS FIRST
-    // -------------------------------
-    while (rowsArray.length < MIN_ROWS) {
-      rowsArray.push(`
+      // -------------------------------
+      // ✅ ADD BLANK ROWS FIRST
+      // -------------------------------
+      while (rowsArray.length < MIN_ROWS) {
+        rowsArray.push(`
         <tr>
           <td style="height:25px;"></td>
           <td></td>
           <td></td>
         </tr>
       `);
-    }
+      }
 
-    // -------------------------------
-    // ✅ TOTAL ROW ALWAYS LAST + SHADED
-    // -------------------------------
-    rowsArray.push(`
+      // -------------------------------
+      // ✅ TOTAL ROW ALWAYS LAST + SHADED
+      // -------------------------------
+      rowsArray.push(`
       <tr style="background:#eaeaea;">
         <td><strong>${totalCartons} cartons</strong></td>
         <td><strong>${totalUnits} units</strong></td>
@@ -372,9 +372,9 @@ const handleSaveAndPrintDraft = async () => {
       </tr>
     `);
 
-    const rowsHtml = rowsArray.join("");
+      const rowsHtml = rowsArray.join("");
 
-    const html = `
+      const html = `
       <html>
         <head>
           <title>
@@ -394,7 +394,7 @@ const handleSaveAndPrintDraft = async () => {
               left: 50%;
               transform: translate(-50%, -50%);
               font-size: 100px;
-              color: rgba(200, 200, 200, 0.2);
+              color: rgba(16, 16, 16, 0.41);
               font-weight: 700;
               letter-spacing: 10px;
               user-select: none;
@@ -547,22 +547,21 @@ const handleSaveAndPrintDraft = async () => {
       </html>
     `;
 
-    const win = window.open("", "_blank");
-    win.document.write(html);
-    win.document.close();
-    win.print();
-  } catch (err) {
-    console.error("Save and print draft error:", err);
-    setSnack({
-      open: true,
-      msg: "Failed to save & print draft",
-      type: "error",
-    });
-  } finally {
-    setSaving(false);
-  }
-};
-
+      const win = window.open("", "_blank");
+      win.document.write(html);
+      win.document.close();
+      win.print();
+    } catch (err) {
+      console.error("Save and print draft error:", err);
+      setSnack({
+        open: true,
+        msg: "Failed to save & print draft",
+        type: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // convenience to remove an item from selection
   const removeSelection = (invId) => {
