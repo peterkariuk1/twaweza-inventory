@@ -1,7 +1,7 @@
 .inventory-page {
   padding: 1rem;
   color: var(--secondary-color);
-  background: var(--primary-color);
+  background: var(--accent-color);
   width: 96%;
   z-index: 0.4;
 }
@@ -178,7 +178,7 @@
 .inventory-table-wrapper {
   max-height: 220px; /* limit height */
   overflow-y: auto;
-  background: var(--primary-color);
+  background: var(--accent-color);
   border-radius: 12px;
   /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.61); */
 }
@@ -199,13 +199,13 @@
   width: 100%;
   border-collapse: collapse;
   color: var(--dark-color);
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .inventory-table thead {
-  background: rgba(255, 255, 255, 0.08);
-  /* position: sticky; */
-  top: 0;
+  background: rgb(255, 255, 255);
+  /* position: fixed; */
+  /* top: 0; */
   /* z-index: 2; */
 }
 
@@ -242,8 +242,15 @@
   color: #ffa726;
 }
 
+.warning-icon {
+  color: #ffa726;
+}
+
 .status-red {
   background: #ff525233;
+  color: #ff5252;
+}
+.low-icon {
   color: #ff5252;
 }
 

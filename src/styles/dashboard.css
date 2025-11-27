@@ -15,7 +15,7 @@
 .main-area {
   flex: 1;
   margin-left: 280px; /* expanded sidebar width */
-  background: var(--primary-color);
+  background: var(--accent-color);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
