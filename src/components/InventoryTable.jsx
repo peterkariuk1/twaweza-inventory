@@ -215,7 +215,7 @@ const InventoryTable = () => {
 
     if (s === "in stock") return "status-green";
     if (s === "moderate") return "status-orange";
-    if (s === "low") return "status-red";
+    if (s === "low") return "status-orange";
     if (s === "out of stock") return "status-red";
 
     return "status-red"; // fallback
