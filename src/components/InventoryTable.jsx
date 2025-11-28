@@ -1,17 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  collection,
-  onSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc,
-  getDoc,
-} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { CircularProgress } from "@mui/material";
 import "../styles/inventory.css";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
+import EmailAlerts from "./EmailAlerts";
 
 const formatTimestamp = (ts) => {
   if (!ts) return "—";
@@ -122,12 +116,7 @@ const InventoryTable = () => {
         );
       } else {
         // debug price
-        console.log(
-          "Matched product",
-          prod.productId,
-          "unitPrice",
-          prod.unitPrice
-        );
+        console.log();
       }
 
       // Unit price
@@ -203,10 +192,7 @@ const InventoryTable = () => {
     setLoading(false);
   }, [inventory, productsMap]);
 
-  // function maskMiddle(text) {
-  //   if (!text || text.length <= 5) return text; // nothing to mask
-  //   return text.slice(0, 3) + "…" + text.slice(-2);
-  // }
+
 
   function getStatusClass(status) {
     if (!status) return "status-red";
@@ -314,6 +300,7 @@ const InventoryTable = () => {
           </table>
         )}
       </div>
+      <EmailAlerts />
     </div>
   );
 };

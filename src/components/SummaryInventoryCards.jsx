@@ -83,13 +83,13 @@ const SummaryCards = () => {
       title: "Low Stock",
       value: lowStockCount,
       icon: <WarningAmberIcon className="warning-icon" />,
-      link: "/",
+      link: "",
     },
     {
       title: "Out of Stock",
       value: outStockCount,
       icon: <RemoveShoppingCartIcon className="low-icon" />,
-      link: "/products",
+      link: "",
     },
   ];
 
