@@ -14,7 +14,6 @@ import {
   addDoc,
   doc,
   writeBatch,
-  updateDoc,
 } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { logEvent } from "../utils/Logger";
@@ -747,10 +746,10 @@ const NewOrderModal = ({ onClose }) => {
 
                         <div style={{ fontSize: 13, textAlign: "right" }}>
                           <div style={{ fontWeight: 700 }}>
-                            {computeOrderUnits(inv, sel)} unit/s
+                            {computeOrderUnits.toLocaleString()(inv, sel)} unit/s
                           </div>
                           <div style={{ fontSize: 11, opacity: 0.8 }}>
-                            of {inv.totalUnits}
+                            of {inv.totalUnits.toLocaleString()}
                           </div>
                         </div>
                       </div>

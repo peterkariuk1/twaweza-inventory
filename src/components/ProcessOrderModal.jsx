@@ -497,31 +497,57 @@ export default function OrderProcessingModal({ open, onClose, order }) {
 
         <DialogActions>
           {/* Cancel & Return Buttons */}
-          <Button
-            onClick={() => setShowCancelConfirm(true)}
-            color="error"
-            disabled={isStatusDisabled || loadingCancel}
-          >
-            {loadingCancel ? <CircularProgress size={20} /> : "Cancel Order"}
-          </Button>
+          {isStatusAllowed ? (
+            <Button
+              onClick={() => setShowCancelConfirm(true)}
+              color="error"
+              disabled={loadingCancel}
+            >
+              {loadingCancel ? <CircularProgress size={20} /> : "Cancel Order"}
+            </Button>
+          ) : (
+            <Tooltip title="You cannot cancel this order due to its current status or lack of permission">
+              <span>
+                <Button color="error" disabled>
+                  Cancel Order
+                </Button>
+              </span>
+            </Tooltip>
+          )}
 
-          <Button
-            onClick={() => setShowReturnConfirm(true)}
-            color="warning"
-            disabled={isStatusDisabled || loadingReturn}
-          >
-            {loadingReturn ? <CircularProgress size={20} /> : "Return Order"}
-          </Button>
+          {isStatusAllowed ? (
+            <Button
+              onClick={() => setShowReturnConfirm(true)}
+              color="warning"
+              disabled={loadingReturn}
+            >
+              {loadingReturn ? <CircularProgress size={20} /> : "Return Order"}
+            </Button>
+          ) : (
+            <Tooltip title="You cannot return this order due to its current status or lack of permission">
+              <span>
+                <Button color="warning" disabled>
+                  Return Order
+                </Button>
+              </span>
+            </Tooltip>
+          )}
 
           <Button onClick={handlePrint}>Print Note</Button>
 
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            disabled={!isStatusAllowed || saving}
-          >
-            {saving ? <CircularProgress size={20} /> : "Save Changes"}
-          </Button>
+          {isStatusAllowed ? (
+            <Button variant="contained" onClick={handleSave} disabled={saving}>
+              {saving ? <CircularProgress size={20} /> : "Save Changes"}
+            </Button>
+          ) : (
+            <Tooltip title="You cannot save changes because the order is Cancelled/Returned or you lack permission">
+              <span>
+                <Button variant="contained" disabled>
+                  Save Changes
+                </Button>
+              </span>
+            </Tooltip>
+          )}
         </DialogActions>
       </Dialog>
 
