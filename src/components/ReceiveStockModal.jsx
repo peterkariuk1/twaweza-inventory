@@ -10,7 +10,7 @@ import { collection, getDocs, addDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { logEvent } from "../utils/Logger";
 
-import "../styles/addItemModal.css";
+import "../styles/additemmodal.css";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
