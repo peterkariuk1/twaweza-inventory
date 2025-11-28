@@ -12,7 +12,7 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-import "../styles/recentLogs.css";
+import "../styles/recentlogs.css";
 
 const styleModal = {
   position: "absolute",
